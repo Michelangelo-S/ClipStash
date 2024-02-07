@@ -1,0 +1,21 @@
+[package]
+name = "clipstack"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+directories = "5.0.1"
+auto-launch = "0.5.0"
+systray = "0.4.0"
+winapi = { version = "0.3.9", features = ["std", "impl-default", "windef", "winuser"] }
+arboard = "3.3.0"
+once_cell = "1.8.0"
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+glium = { version = "0.30.2", default-features = true }
+imgui = {version = "0.8.2", features = ["tables-api"]}
+imgui-glium-renderer = "0.8.2"
+imgui-winit-support = "0.8.2"
+image = "0.24.8"
