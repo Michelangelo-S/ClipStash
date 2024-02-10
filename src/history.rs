@@ -12,6 +12,7 @@ static CLIPBOARD_HISTORY: Lazy<Mutex<ClipboardHistory>> =
 #[derive(Serialize, Deserialize)]
 pub struct ClipboardHistory {
     list_items: Vec<String>,
+    #[serde(skip_serializing)]
     history_file_path: String,
 }
 
