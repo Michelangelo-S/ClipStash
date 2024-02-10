@@ -52,7 +52,15 @@ fn main() {
 }
 
 fn monitor_clipboard() {
-    let mut clipboard = Clipboard::new().unwrap();
+    let mut clipboard = loop {
+        match Clipboard::new() {
+            Ok(clipboard) => break clipboard,
+            Err(e) => {
+                eprintln!("Failed to initialize clipboard: {}. Retrying...", e);
+                continue;
+            }
+        }
+    };
     let mut last_element = history::ClipboardHistory::get_instance()
         .get_items()
         .last()
