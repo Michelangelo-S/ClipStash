@@ -116,7 +116,7 @@ impl ImguiWindow {
         let mut window_builder = glium::glutin::window::WindowBuilder::new()
             .with_inner_size(glium::glutin::dpi::LogicalSize::new(800.0, 600.0))
             .with_window_icon(Some(icon.clone()))
-            .with_title("Clipboard Manager");
+            .with_title("ClipStash - Clipboard Manager");
 
         #[cfg(target_os = "windows")]
         {
