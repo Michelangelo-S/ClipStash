@@ -4,7 +4,7 @@
 
 ## Information
 
-A cross-platform clipboard manager written in Rust and imgui-rs, which supports both Windows and Linux.
+A cross-platform clipboard manager written in Rust and [imgui-rs](https://github.com/imgui-rs/imgui-rs), which supports both Windows and Linux.
 
 ## Features
 
@@ -19,9 +19,6 @@ A cross-platform clipboard manager written in Rust and imgui-rs, which supports 
 ### Windows
 
 ```sh
-cargo build
-```
-```sh
 cargo run
 ```
 
@@ -29,9 +26,6 @@ cargo run
 
 ```sh
 sudo apt install build-essential clang libappindicator3-dev libgtk-3-dev
-```
-```sh
-cargo build
 ```
 ```sh
 cargo run
