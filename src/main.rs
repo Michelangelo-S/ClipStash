@@ -14,12 +14,22 @@ use window::{ImguiWindow, Skin};
 use crate::ui::UI;
 
 fn main() {
+    let args: Vec<_> = env::args().collect();
+    if args.len() > 1 {
+        // If the app auto-started, the window might glitch out if it's opened immediately
+        // This is not optimal, but it's a quick fix for now
+        if args[1] == "--auto-started" {
+            std::thread::sleep(std::time::Duration::from_secs(5));
+        }
+    }
+
     std::thread::spawn(monitor_clipboard);
 
     let current_exe_path = env::current_exe().unwrap();
     let autostarter = AutoLaunchBuilder::new()
         .set_app_name("clipboard-manager")
         .set_app_path(current_exe_path.to_str().unwrap())
+        .set_args(&["--auto-started"])
         .build()
         .unwrap();
 
