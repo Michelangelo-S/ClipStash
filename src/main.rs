@@ -14,48 +14,7 @@ use window::{ImguiWindow, Skin};
 use crate::ui::UI;
 
 fn main() {
-    std::thread::spawn(|| {
-        let mut clipboard = Clipboard::new().unwrap();
-        let mut last_element = history::ClipboardHistory::get_instance()
-            .get_items()
-            .last()
-            .unwrap_or(&"".to_string())
-            .clone();
-        loop {
-            std::thread::sleep(std::time::Duration::from_millis(100));
-
-            let clipboard_contents = match clipboard.get_text() {
-                Ok(contents) => contents,
-                Err(_) => {
-                    std::thread::sleep(std::time::Duration::from_millis(200));
-                    continue;
-                }
-            };
-            let trimmed_contents = clipboard_contents.trim();
-
-            if trimmed_contents.is_empty() {
-                continue;
-            }
-
-            if trimmed_contents == last_element {
-                continue;
-            }
-
-            // Acquire a lock to the clipboard history & config only when we need to,
-            // and release it immediately, before the thread sleeps.
-            let mut clip_history = history::ClipboardHistory::get_instance();
-            let config = preferences::Config::get_instance();
-
-            clip_history.add_item(trimmed_contents.to_string());
-            last_element = trimmed_contents.to_string();
-
-            if config.get_save_history() {
-                clip_history
-                    .save_to_file()
-                    .expect("Failed to save history to file");
-            }
-        }
-    });
+    std::thread::spawn(monitor_clipboard);
 
     let current_exe_path = env::current_exe().unwrap();
     let autostarter = AutoLaunchBuilder::new()
@@ -90,4 +49,47 @@ fn main() {
         ui.borrow_mut()
             .on_draw(imgui, display, platform, renderer, control_flow);
     });
+}
+
+fn monitor_clipboard() {
+    let mut clipboard = Clipboard::new().unwrap();
+    let mut last_element = history::ClipboardHistory::get_instance()
+        .get_items()
+        .last()
+        .unwrap_or(&"".to_string())
+        .clone();
+    loop {
+        std::thread::sleep(std::time::Duration::from_millis(100));
+
+        let clipboard_contents = match clipboard.get_text() {
+            Ok(contents) => contents,
+            Err(_) => {
+                std::thread::sleep(std::time::Duration::from_millis(200));
+                continue;
+            }
+        };
+        let trimmed_contents = clipboard_contents.trim();
+
+        if trimmed_contents.is_empty() {
+            continue;
+        }
+
+        if trimmed_contents == last_element {
+            continue;
+        }
+
+        // Acquire a lock to the clipboard history & config only when we need to,
+        // and release it immediately, before the thread sleeps.
+        let mut clip_history = history::ClipboardHistory::get_instance();
+        let config = preferences::Config::get_instance();
+
+        clip_history.add_item(trimmed_contents.to_string());
+        last_element = trimmed_contents.to_string();
+
+        if config.get_save_history() {
+            clip_history
+                .save_to_file()
+                .expect("Failed to save history to file");
+        }
+    }
 }
