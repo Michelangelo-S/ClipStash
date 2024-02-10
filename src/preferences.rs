@@ -11,7 +11,6 @@ static CONFIG: Lazy<Mutex<Config>> = Lazy::new(|| Mutex::new(Config::new()));
 pub struct Config {
     trim_clips: bool,
     save_history: bool,
-    #[serde(skip_serializing)]
     config_file_path: String,
 }
 
