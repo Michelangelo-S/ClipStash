@@ -1,14 +1,19 @@
 use glium::glutin::event_loop::ControlFlow;
-use glium::glutin::platform::windows::WindowBuilderExtWindows;
 use glium::glutin::window::Icon;
 use glium::{self, Display};
+#[cfg(target_os = "windows")]
+use glium::glutin::platform::windows::WindowBuilderExtWindows;
+
 use image::io::Reader as ImageReader;
 use image::GenericImageView;
 use imgui::{Context, FontConfig, FontSource};
+
 use imgui_glium_renderer::Renderer;
 use imgui_winit_support::{HiDpiMode, WinitPlatform};
+
 use std::sync::mpsc;
 use std::{env, thread};
+
 use systray::Application;
 
 use std::cell::RefCell;
@@ -108,17 +113,19 @@ impl ImguiWindow {
         let icon = Icon::from_rgba(rgba.into_raw(), width, height).expect("Failed to create icon");
 
         let event_loop = glium::glutin::event_loop::EventLoop::new();
-        let window_builder = glium::glutin::window::WindowBuilder::new()
+        let mut window_builder = glium::glutin::window::WindowBuilder::new()
             .with_inner_size(glium::glutin::dpi::LogicalSize::new(800.0, 600.0))
             .with_window_icon(Some(icon.clone()))
-            .with_taskbar_icon(Some(icon))
             .with_title("Clipboard Manager");
 
-        let context_builder = glium::glutin::ContextBuilder::new()
-            .with_vsync(true)
-            .with_double_buffer(Some(true))
-            .with_hardware_acceleration(Some(true));
+        #[cfg(target_os = "windows")]
+        {
+            window_builder = window_builder.with_taskbar_icon(Some(icon));
+        }
 
+        let context_builder = glium::glutin::ContextBuilder::new()
+            .with_vsync(true);
+        
         let display = RefCell::new(
             glium::Display::new(window_builder, context_builder, &event_loop).unwrap(),
         );
